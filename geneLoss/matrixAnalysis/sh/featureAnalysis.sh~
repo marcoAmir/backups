@@ -1,0 +1,54 @@
+#!/bin/bash -e 
+
+ensemblDir=/cluster/u/amirma/geneLoss/data/Ensembl
+ucscDir=/cluster/u/amirma/geneLoss/data/UCSC
+callTable=/cluster/u/amirma/geneLoss/matrixAnalysis/data/hg19.calltable
+callTableColumns=/cluster/u/amirma/geneLoss/matrixAnalysis/data/columns.hg19.calltable
+src=/cluster/u/amirma/geneLoss/matrixAnalysis/src
+
+callsVsEnsembl=/cluster/u/amirma/geneLoss/matrixAnalysis/callsVsEnsembl.tsv
+
+assembly=$1
+species=$2
+class=$3
+mkdir $species
+mkdir $species/TP $species/FP
+
+echo -e "\n  ...partioning Fp/Tp gene-loss calls for $species..."
+join -t$'\t' -1 1 -2 1 -o '1.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10' <(awk -F'\t' '{if($3==1) print $0}' geneSpecies.placentals.call | grep -w $assembly | cut -f1 | sort -u) <(sort $ensemblDir/OrthoTables74/human${species}.EnsemblOrtho.biomart74.map) | awk -F'\t' '{IGNORECASE=1; if($4~/protein_coding/ && $9~/protein_coding/ && $3==$8) print $0}' | cut -f1,2 | sort -u > $species/FP/fpGeneTranscripts.tsv
+join -t$'\t' -1 1 -2 1 -o '2.1 2.2' <(comm -3 -2 <(awk -F'\t' '{if($3==1) print $0}' geneSpecies.placentals.call | grep -w $assembly | cut -f1 | sort -u) <(cut -f1 $species/FP/fpGeneTranscripts.tsv | sort -u) | sort -u) <(sort $ensemblDir/geneTranscript.ensembl74.tsv) | sort -u > $species/TP/tpGeneTranscripts.tsv
+
+# Add the count to the table:
+echo -e "\n  ...updating precision table..."
+TPs=`cut -f1 $species/TP/tpGeneTranscripts.tsv | sort -u | wc -l`
+FPs=`cut -f1 $species/FP/fpGeneTranscripts.tsv | sort -u | wc -l`
+echo -e "$species\t$((TPs+FPs))\t$FPs\t$3" >> $callsVsEnsembl
+
+# Expand with the features of the transcript in each annotation
+echo -e "\n  ...reading ortholgous TP-genes transcript calls for $species from hg19.calltable..."
+awk -F'\t' '{for(i=1; i<=NF; i++) printf $i"\t"}' $callTableColumns  | awk -F'\t' '{print "ensgID\tenstID\t"$1"\t"$3"\t"$4"\t"$11"\t"$5"\t"$6"\t"$15"\t"$14"\tfraction.deleted.exons\tfraction.deleted.bases"}' > tmp
+join -t$'\t' -1 2 -2 2 -o '1.1 1.2 2.1 2.3 2.4 2.11 2.5 2.6 2.15 2.14' <(sort -k2 $species/TP/tpGeneTranscripts.tsv) <(grep $assembly $callTable | sort -k2,2) | sort -u | awk -F'\t' '{print $0"\t"$7/$9"\t"$8/$10}' >> tmp; mv tmp $species/TP/tpGeneTranscripts.tsv
+echo -e "\n  ...reading ortholgous FP-genes transcript calls for $species from hg19.calltable..."
+awk -F'\t' '{for(i=1; i<=NF; i++) printf $i"\t"}' $callTableColumns  | awk -F'\t' '{print "ensgID\tenstID\t"$1"\t"$3"\t"$4"\t"$11"\t"$5"\t"$6"\t"$15"\t"$14"\tfraction.deleted.exons\tfraction.deleted.bases"}' > tmp
+join -t$'\t' -1 2 -2 2 -o '1.1 1.2 2.1 2.3 2.4 2.11 2.5 2.6 2.15 2.14' <(sort -k2 $species/FP/fpGeneTranscripts.tsv) <(grep $assembly $callTable | sort -k2,2) | sort -u | awk -F'\t' '{print $0"\t"$7/$9"\t"$8/$10}' >> tmp; mv tmp $species/FP/fpGeneTranscripts.tsv
+
+# Now extract from the TP and FP, what genes overlap (any) segmental duplication event:
+echo -e "\n  ...overlapping with seg-dup regions..."
+join -t$'\t' -1 1 -2 1 -o '2.3 2.4 2.5 1.1' <(cut -f1 $species/FP/fpGeneTranscripts.tsv | sort -u) <(sort $ensemblDir/geneTranscript.ensembl74.tsv) | sort -u | overlapSelect stdin $ucscDir/hg19.segmentalDuplications.bed -selectFmt=bed -statsOutput stdout | tail -n+2 | cut -f2 | sort -u > $species/FP/fpSegDupEnsg.txt
+join -t$'\t' -1 1 -2 1 -o '2.3 2.4 2.5 1.1' <(cut -f1 $species/TP/tpGeneTranscripts.tsv | sort -u) <(sort $ensemblDir/geneTranscript.ensembl74.tsv) | sort -u | overlapSelect stdin $ucscDir/hg19.segmentalDuplications.bed -selectFmt=bed -statsOutput stdout | tail -n+2 | cut -f2 | sort -u > $species/TP/tpSegDupEnsg.txt
+
+# Some species specific R analysis
+echo -e "\n  ...species exons/bases deletions in TP and FP calls (in R)..."
+cd $species
+sed -e "s/currSpecies/$species/g" $src/R/transcriptsTpFp.R > transcriptsTpFp.R
+Rscript transcriptsTpFp.R
+#sed -e "s/sp_analysis/$species/g" TpFpFeatures.R > $species/TpFpFeatures.R
+#Rscript TpFpFeatures.R
+cd ../
+
+# Update the precision-scatter plot (via R) whenever a new species is added
+echo -e "\n  ...updating precision by Ensembl74 scatter plot..."
+Rscript $src/R/precisionScatter.R
+cp callsVsEnsembl.png ../
+
+echo -e "\n DONE!"

@@ -1,0 +1,27 @@
+require(ggplot2)
+
+# This is hte exact same analysis as precisionScatter (a scatter of gene-loss calls in a species and the number of genes with Ensembl protein-coding orthologs)
+# Here I'll plot the original scatter (with text in gray), and the new scatter in colors
+
+calls    <- read.table('delExonFrac_0.25.tmp', header=TRUE)
+callsAll <- read.table('./featuresTpFpCalls/cutByExonsDelFrac.tsv', header=TRUE)
+
+allColors <- c("darkorchid2","red","blue","darkgreen", "gray")
+allCorrections <- c("no thresholds")
+
+# plot the single correction
+correction <- 'delExonFrac_0.25'
+
+ggplot(calls) + geom_line(aes(x=1:nrow(calls), y=fdr, color='no thresholds')) + geom_point(aes(x=1:nrow(calls), y=fdr, color='no thresholds')) + geom_line(aes(x=1:nrow(calls), y=fdrCorrected, color=correction)) + geom_point(aes(x=1:nrow(calls), y=fdrCorrected, color=correction)) + geom_line(data=data.frame(X=1:nrow(calls), Y=rep(0.1, nrow(calls))), aes(x=X, y=Y), linetype=2) + scale_x_continuous(breaks=1:nrow(calls), labels=calls$species) + theme_bw() + theme(panel.border = element_blank()) + theme(axis.text.x = element_text(colour="black", angle=90, vjust=0.5), axis.text.y = element_text(colour="black"), axis.text=element_text(size=14), axis.title=element_text(size=14)) + xlab('') + ylab('FDR') + scale_colour_manual(name='gene loss calls corrections', values=c("darkgreen", "gray"), labels=c(correction, "no thresholds"))
+ggsave('./featuresTpFpCalls/FDR_delExonsFrac_0.25.png', width=12, height=7)
+
+# update the figures with all the corrections:
+p <- ggplot() + geom_line(data=calls, aes(x=1:nrow(calls), y=fdr, color='no thresholds')) + geom_point(data=calls, aes(x=1:nrow(calls), y=fdr, color='no thresholds'))
+thresholds <- sort(unique(callsAll[,2]))
+
+for (t in thresholds){
+	correction <- paste('delExonFrac_', t, sep="")
+	allCorrections <- c(correction, allCorrections)
+	p <- p + geom_line(data=subset(callsAll, fracDelExons==t), aes(x=1:nrow(calls), y=fdrCorrected, color=correction)) + geom_point(data=subset(callsAll, fracDelExons==t), aes(x=1:nrow(calls), y=fdrCorrected, color=correction))
+}
+p <- p + geom_line(data=data.frame(X=1:nrow(calls), Y=rep(0.1, nrow(calls))), aes(x=X, y=Y), linetype=2) + scale_x_continuous(breaks=1:nrow(calls), labels=calls$species) + theme_bw() + theme(panel.border = element_blank()) + theme(axis.text.x = element_text(colour="black", angle=90, vjust=0.5), axis.text.y = element_text(colour="black"), axis.text=element_text(size=14), axis.title=element_text(size=14)) + xlab('') + ylab('FDR') + scale_colour_manual(name='gene loss calls corrections', values=allColors[(length(allColors)-length(thresholds)):length(allColors)], labels=allCorrections)
