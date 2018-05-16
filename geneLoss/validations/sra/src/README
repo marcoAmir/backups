@@ -1,0 +1,59 @@
+How to get a hold of public NGS data, and extract the raw data from it (e.g., fastq files from a genome assembly project)
+
+1) This is a blog post I found useful:
+	https://nsaunders.wordpress.com/2011/12/22/sequencing-for-relics-from-the-sanger-era-part-1-getting-the-raw-data/
+
+   So follow the intsructions in there:
+   ------------------------------------
+	(i)  data: SRX109792: Halomonas sp. GFAJ-1 ATCC BAA-2256 library (search in ncbi->SRA for SRX109792)
+	    First, make sure you read the summary information about the library to understand what type of NGS data we are looking at:
+		Name: GFAJ-1
+		Instrument: Illumina HiSeq 2000
+		Strategy: WGS
+		Source: GENOMIC
+		Selection: RANDOM
+		Layout: PAIRED
+	    Second, review the information about the sequencing platform:
+		Instrument model: Illumina HiSeq 2000
+		Spot descriptor:  -> 1  forward 102  reverse <-		# this seems to be the read length
+		Total:            1 run, 65.1M spots, 13.2G bases
+		    Download reads for this experiment in sra(7.0G) or sra-lite(7.0G) formats 
+		#       Run          # of Spots    # of Bases
+		1.      SRR385952    65,107,412    13.2G
+	(ii)  data availability: data are available in sra and sra-lite format (the former contains some extra info as intensity-scores). These are big files, and processing makes them even bigger so make sure you prepare with appropriate hardware (in 2011, 2 TB of storage, 96 GB RAM and 24 CPUs were suggested to be enough)
+	(iii) to handle the SRA data format, there are several software packages. Seems like the most straitforward thing to do is to convert it to FastQ format. NCBI provides its SRA-toolkit for that end (see sra-toolkit_intall.readme for intructions)
+	(iv) get the data that you want (7G total):
+		mkdir -p projects/gfaj1
+		cd projects/gfaj1
+		wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByExp/sra/SRX/SRX109/SRX109792/SRR385952/SRR385952.sra
+		# or instead, use the bash script that will break the id string and get the data for you:
+		./get_SRA_file.sh SRR385952
+	(v) processing the data (sra to fastq using fastq-dump)
+		Is the library 'paired-end'? (this is why it is important to examine the details of the library)
+		if so, DO NOT RUN:
+			fastq-dump SRR385952.sra
+		Why? the resulting file SRR385952.fastq (of which I kept the first 20 lines as example and renamed to SRR385952.NotGood.fastq) contains sequences with length=202, while infact, there should be a forward and reverse seqeunces, each of length 101 (info you can find in spot descriptor). These are joind in the SRA file and you need to split them. (you will also notice the above will report Read 65107412 spots for SRR385952.sra)
+		Instead, you want to run in one of two ways:
+			fastq-dump --split-spot SRR385952.sra
+		Or:
+			fastq-dump --split-files SRR385952.sra		# documentation for split-files confusingly reads “Dump each read into separate file.” What it actually means is: dump into forward and reverse files.
+		The only difference between the last two files seems to be one file (in the former, with both forward and reverse reads) versus two files in the latter (one for each category)
+	(vi) Distinguishing the forward and reverse reads. 
+	     in the output fastq files you have the forward + reverse reads. Unfortunately, they have the same ID in the header line...
+	     so you can add suffixes of 1 and 2 to the forward an reverse strands respectively:
+		(if you ran --split-spot):
+			sed -i '1~8s/^@SRR385952\.[0-9]*/&\/1/' SRR385952.fastq
+			sed -i '5~8s/^@SRR385952\.[0-9]*/&\/2/' SRR385952.fastq
+	(vii) quality scores.
+		by default, fastq-dump off-sets the quality scores by 33.
+		for example, for the first sequence (first five bases) we see that:
+			@SRR385952.1 HWI-ST484_0123:8:1101:1154:2066 length=101
+			ATNCG...
+			+SRR385952.1 HWI-ST484_0123:8:1101:1154:2066 length=101
+
+	I kept just the first 20 lines or so from each file for example, and zipped the sra file
+			BC#4A...
+		The decimal ASCII code for B, C, #, 4 and A is 66, 67, 35, 52, 65
+		but the actuall quality score of the data (for example, if you look at the read in NCBI) is 33, 34, 2, 19, 22
+
+	

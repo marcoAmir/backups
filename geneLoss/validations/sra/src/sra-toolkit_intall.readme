@@ -1,0 +1,9 @@
+# find the most up to date package etc.
+#wget http://trace.ncbi.nlm.nih.gov/Traces/sra/static/sra_sdk-2.1.8.tar.gz
+tar zxvf sra_sdk-2.1.8.tar.gz
+cd sra_sdk-2.1.8
+OUTDIR=/home/neil/sra
+make OUTDIR="$OUTDIR" out
+make static
+make GCC debug
+make

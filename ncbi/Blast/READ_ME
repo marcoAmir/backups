@@ -1,0 +1,8 @@
+# follow instructions at:
+	https://www.ncbi.nlm.nih.gov/books/NBK52640/
+
+wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/*x64-linux* .
+
+gunzip ncbi-blast-2.6.0+-x64-linux.tar.gz 
+
+tar xvpf ncbi-blast-2.6.0+-x64-linux.tar
