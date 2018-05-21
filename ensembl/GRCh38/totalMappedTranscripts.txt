@@ -1,0 +1,1 @@
+/cluster/u/amirma/git/forwardGenomics/geneLoss/convergentEvolution/protein_alignments_hg38/totalMappedTranscripts.txt
