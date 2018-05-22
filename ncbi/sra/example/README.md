@@ -13,5 +13,10 @@
 	https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP147558
 	(just analyze some of the samples - comment out experiments samples you don't want)
    And download the data:
+	../src/get_SRA_file.sh SRR_Acc_List.txt
+
+3) Get the fastq files using fastq-dump:
+	cd SRR7171661/
+	fastq-dump --split-files --gzip SRR7171661.sra
 	
 

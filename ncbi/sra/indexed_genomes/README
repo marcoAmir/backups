@@ -1,0 +1,19 @@
+twoBitToFa /cluster/gbdb-bej/equCab2/equCab2.2bit equCab2.fa
+
+$BT2_HOME/bowtie2-build equCab2.fa equCab2
+
+You should get 6 files:
+equCab2.1.bt2
+equCab2.2.bt2
+equCab2.3.bt2
+equCab2.4.bt2
+equCab2.fa.gz
+equCab2.rev.1.bt2
+equCab2.rev.2.bt2
+
+##########################
+minke-whale
+wget http://hgdownload.soe.ucsc.edu/goldenPath/balAcu1/bigZips/balAcu1.2bit
+
+twoBitToFa balAcu1.2bit balAcu1.fa
+$BT2_HOME/bowtie2-build balAcu1.fa balAcu1
