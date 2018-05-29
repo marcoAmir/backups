@@ -1,0 +1,9 @@
+1d4e1d8584cd66ce08c82259d034fe74  ExAC.r1.sites.vep.vcf.gz
+4012aba301f8bc103d951c57a8b704ee  ExAC.r1.sites.vep.vcf.gz.tbi
+200e794c8835fcf46394df35f1f7be23  README.VEP_annotations
+1fdfbbec6fa74168a9eef4c3621c8321  README.ftp_structure
+71aac1f13bb536dd088b42f38da007df  README.histogram_annotation
+25b825a733b631dc41c68c8217134d24  README.known_issues
+8662eaf699924cfb457f0d306f749961  README.new_annotations
+2f4b904055ce503d805b74a2e2d8bf9b  README.population_annotations
+5faa9b029c523e4a86a47ed62f0ea992  README.release1

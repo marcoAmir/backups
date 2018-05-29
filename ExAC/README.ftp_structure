@@ -1,0 +1,60 @@
+
+At the top level there are 9 files and 5 directories
+
+File/Directory                          Description
+=============================           ========================
+README.ftp_structure                    This file!
+README.population_annotations           Details on popluation abbreviations and counts
+README.release1                         Release 1 details	
+README.new_annotations                  New annotations added in Release 1
+README.VEP_annotations                  Details on Variant Effect Predictor (VEP) Annotations
+README.known_issues                     A list of known issues that will be addressed in future releases
+ExAC.r1.sites.vep.vcf.gz                ExAC release 1 bgzipped VEP annotated sites file
+ExAC.r1.sites.vep.vcf.gz.tbi            ExAC release 1 tabix file for annotated sites file
+md5sum.txt                              md5 checksum for files in this directory
+subsets/                                See below
+coverage/                               See below
+functional_gene_constraint/             See below
+resources/                              See below
+manuscript_data/                        See below
+
+
+=== subsets ===:
+This directory contains two commonly requested subsets from ExAC release 1 (60,706 samples)
+ExAC.r1.nonTCGA.sites.vep.vcf.gz - Excluding TCGA cohorts (53,105 samples)
+ExAC.r1.nonpsych.sites.vcf.gz - Excluding Psychiatric cohorts (45,376 samples)
+
+=== coverage ===:
+This directory contains the per base coverage for the intervals used for variant calling 
+(i.e. exome_calling_regions.v1.interval_list). There is one bgzipped file and tabix index per chromosome. 
+Using samtools depth (Base Qual >= 10 and Mapping Qual >= 20), coverage was taken from sampling 10% of total samples. 
+The mean, median and fraction of samples above 1x, 5x, 10x, 20x, 25x, 30x, 50x and 100x is reported.
+
+=== functional_gene_constraint ===:
+This directory contains the following information for the canonical transcripts as defined in Ensembl v75 (GENCODE v19):
+- the probabilities of mutation
+- observed and expected rare (minor allele frequency ~< 0.1%) single nucleotide variant counts
+- Z scores for the deviation of observation from expectation
+- the probability of being loss-of-function intolerant (intolerant of heterozygous and homozygous loss-of-function variants)
+- the probability of being intolerant of homozygous, but not heterozygous loss-of-function variants
+- the probability of being tolerant of both heterozygous and homozygous loss-of-function variants
+
+These analyses have been run on three major datasets: the full ExAC data, the nonTCGA ExAC data, and the nonpsych ExAC data.
+More information can be found above in this README
+
+=== resources ===:
+This directory contains resources used in the project that others may find useful
+Axiom_Exome_Plus.genotypes.all_populations.poly.vcf.gz  - Used by GATK VQSR
+exome_calling_regions.v1.interval_list                  - Variant calling intervals used by GATK
+purcell5k.intervals                                     - Common variants in Exome (Used by Purcell et. al. PMID: 24463508)
+
+=== manuscript_data ===:
+This directory contains files used to generate the figures in the ExAC manuscript, available on bioRxiv at: http://biorxiv.org/content/early/2015/10/30/030338.
+The *.table.gz files are derived entirely from the sites VCF using a custom script, tableize.py (https://github.com/konradjk/loftee/blob/master/src/tableize_vcf.py),
+followed by annotation with data from the coverage files in coverage/. Of note the tables are broken down as follows:
+ExAC.r1.sites.vep.table.gz                              - The sites VCF tableized into one line per variant, using worst consequence per variant
+ExAC.r1.sites.vep.canonical.table.gz                    - Same as above, but only using annotations for canonical transcripts
+ExAC.r1.sites.vep.gene.table.gz                         - The sites VCF tableized into one line per variant-gene pair, using worst consequence across all transcripts in a gene
+ExAC.r1.sites.vep.transcript.table.gz                   - The sites VCF	tableized into one line	per variant-transcript pair
+forweb_cleaned_exac_r03_march16_z_data_pLI.txt.gz       - The constraint file as in functional_gene_constraint (reproduced for manuscript purposes)
+all_possible_variants/                                  - Contains a "synthetic VCF" with every possible quad-allelic variant in the exome calling regions (see resources)

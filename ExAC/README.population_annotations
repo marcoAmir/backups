@@ -1,0 +1,101 @@
+=========================================================
+Population independent annotation (also included in VCF header):
+
+Adjusted Alt Allele Counts (DP >= 10 & GQ >= 20)
+##INFO=<ID=AC_Adj,Number=A,Type=Integer,Description="Adjusted Allele Counts">
+AC_Adj <= AC
+
+Number of Heterozygous Individuals (DP >= 10 & GQ >= 20)
+##INFO=<ID=AC_Het,Number=A,Type=Integer,Description="Adjusted Heterozygous Counts">
+
+Number of Homozygous Alt Allele Individuals (DP >= 10 & GQ >= 20)
+##INFO=<ID=AC_Hom,Number=A,Type=Integer,Description="Adjusted Homozygous Counts">
+
+For chr1-22:
+sum(AC_Adj) = sum(AC_Het) + 2*sum(AC_Hom) 
+
+=========================================================
+Adjustments made on chrX and chrY
+
+Number of Hemizygous Alt Allele Individuals (DP >= 10 & GQ >= 20) Note: ONLY appears on chrX (non-PAR) and chrY
+##INFO=<ID=AC_Hemi,Number=A,Type=Integer,Description="Adjusted Hemizygous Counts">
+
+AC_Hemi is a count Male alt alleles, where each site (excluding PAR) only has one allele.
+AC_Hom is a count of Female alt alleles
+AC_Het is a count of Female alt alleles
+
+For chrX (non-PAR)
+sum(AC_Adj) = sum(AC_Hemi) + sum(AC_Het) + 2*sum(AC_Hom) 
+AN_Adj (and all population AN on chrX) = 2*n_Female + n_Male
+
+For chrY
+sum(AC_Adj) = sum(AC_Hemi) 
+AN_Adj (and all population AN on chrY) = n_Male
+
+Pseudoautosomal regions (PARs) were taken from http://genome.ucsc.edu/cgi-bin/hgGateway
+X:60001-2699520
+X:154931044-155260560
+ 
+===========================================================
+Population for each sample inferred using PC1-4.
+
+Population Abbreviations:
+AFR	African & African American
+AMR	American
+EAS	East Asian
+FIN	Finnish
+NFE	Non-Finnish European
+SAS	South Asian
+OTH	Other
+
+Population specific annotation (also included in VCF header):
+
+Population specific Alt Allele Counts (DP >= 10 & GQ >= 20)
+##INFO=<ID=AC_AFR,Number=A,Type=Integer,Description="African/African American Allele Counts">
+##INFO=<ID=AC_AMR,Number=A,Type=Integer,Description="American Allele Counts">
+##INFO=<ID=AC_EAS,Number=A,Type=Integer,Description="East Asian Allele Counts">
+##INFO=<ID=AC_FIN,Number=A,Type=Integer,Description="Finnish Allele Counts">
+##INFO=<ID=AC_NFE,Number=A,Type=Integer,Description="Non-Finnish European Allele Counts">
+##INFO=<ID=AC_OTH,Number=A,Type=Integer,Description="Other Allele Counts">
+##INFO=<ID=AC_SAS,Number=A,Type=Integer,Description="South Asian Allele Counts">
+
+Population specific Chromosome Counts (DP >= 10 & GQ >= 20)
+##INFO=<ID=AN_AFR,Number=1,Type=Integer,Description="African/African American Chromosome Count">
+##INFO=<ID=AN_AMR,Number=1,Type=Integer,Description="American Chromosome Count">
+##INFO=<ID=AN_EAS,Number=1,Type=Integer,Description="East Asian Chromosome Count">
+##INFO=<ID=AN_FIN,Number=1,Type=Integer,Description="Finnish Chromosome Count">
+##INFO=<ID=AN_NFE,Number=1,Type=Integer,Description="Non-Finnish European Chromosome Count">
+##INFO=<ID=AN_OTH,Number=1,Type=Integer,Description="Other Chromosome Count">
+##INFO=<ID=AN_SAS,Number=1,Type=Integer,Description="South Asian Chromosome Count">
+
+Population specific Homozygous Alt Counts (DP >= 10 & GQ >= 20)
+##INFO=<ID=Hom_AFR,Number=A,Type=Integer,Description="African/African American Homozygous Counts">
+##INFO=<ID=Hom_AMR,Number=A,Type=Integer,Description="American Homozygous Counts">
+##INFO=<ID=Hom_EAS,Number=A,Type=Integer,Description="East Asian Homozygous Counts">
+##INFO=<ID=Hom_FIN,Number=A,Type=Integer,Description="Finnish Homozygous Counts">
+##INFO=<ID=Hom_NFE,Number=A,Type=Integer,Description="Non-Finnish European Homozygous Counts">
+##INFO=<ID=Hom_OTH,Number=A,Type=Integer,Description="Other Homozygous Counts">
+##INFO=<ID=Hom_SAS,Number=A,Type=Integer,Description="South Asian Homozygous Counts">
+
+Population specific Heterozygous Alt Counts (DP >= 10 & GQ >= 20)
+##INFO=<ID=Het_AFR,Number=A,Type=Integer,Description="African/African American Heterozygous Counts">
+##INFO=<ID=Het_AMR,Number=A,Type=Integer,Description="American Heterozygous Counts">
+##INFO=<ID=Het_EAS,Number=A,Type=Integer,Description="East Asian Heterozygous Counts">
+##INFO=<ID=Het_FIN,Number=A,Type=Integer,Description="Finnish Heterozygous Counts">
+##INFO=<ID=Het_NFE,Number=A,Type=Integer,Description="Non-Finnish European Heterozygous Counts">
+##INFO=<ID=Het_OTH,Number=A,Type=Integer,Description="Other Heterozygous Counts">
+##INFO=<ID=Het_SAS,Number=A,Type=Integer,Description="South Asian Heterozygous Counts">
+
+Population specific Hemizygous Alt Counts (DP >= 10 & GQ >= 20) Note: ONLY appears on chrX (non-PAR) and chrY
+##INFO=<ID=Hemi_AFR,Number=A,Type=Integer,Description="African/African American Hemizygous Counts">
+##INFO=<ID=Hemi_AMR,Number=A,Type=Integer,Description="American Hemizygous Counts">
+##INFO=<ID=Hemi_EAS,Number=A,Type=Integer,Description="East Asian Hemizygous Counts">
+##INFO=<ID=Hemi_FIN,Number=A,Type=Integer,Description="Finnish Hemizygous Counts">
+##INFO=<ID=Hemi_NFE,Number=A,Type=Integer,Description="Non-Finnish European Hemizygous Counts">
+##INFO=<ID=Hemi_OTH,Number=A,Type=Integer,Description="Other Hemizygous Counts">
+##INFO=<ID=Hemi_SAS,Number=A,Type=Integer,Description="South Asian Hemizygous Counts">
+
+Pseudoautosomal regions (PARs) were taken from http://genome.ucsc.edu/cgi-bin/hgGateway
+X:60001-2699520
+X:154931044-155260560
+

@@ -1,0 +1,17 @@
+#Release 1 - 27th February, 2017
+ExAC.r1.sites.vep.vcf.gz
+
+NOTE: This release has added additional annotations detailed in README.new_annotations and does not change allele counts/frequencies in Release 0.3
+
+Produced by Genome Analysis Toolkit (GATK) 3.1 Haplotype Caller pipeline
+
+Contains site information from 60,706 samples
+
+Annotated using VEP (http://www.ensembl.org/info/docs/tools/vep/index.html) v85, with loss-of-function annotations from 
+LOFTEE (https://github.com/konradjk/loftee)
+
+Also contains information on the constraint (intolerance to mutation) of canonical GENCODE transcripts
+
+For more information please refer to
+http://exac.broadinstitute.org/terms
+http://exac.broadinstitute.org/about

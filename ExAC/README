@@ -1,0 +1,16 @@
+ExAC release 1
+--------------
+
+1) get the ExAC data:
+	wget ftp://ftp.broadinstitute.org/pub/ExAC_release/release1/*
+
+2) For exploration and practice, subset the lines in the vcf of variants in the gene MMP21 (ENSG00000154485):
+	zcat ExAC.r1.sites.vep.vcf.gz | grep ENSG00000154485 > MMP21.vcf
+
+3) Now, zip the MMP21 and index it using bgzip and tabix:
+	bgzip MMP21.vcf					# bgzip is a custom version of gzip that breaks tab-delimited genome position files (including VCF) into blocks and gzip compresses each block
+	tabix -f MMP21.vcf.gz				# tabix creates an index for a bgzipped VCF file (which creates *.vcf.gz.tbi)
+
+4) Subset files by chromosome locations ()
+	tabix ExAC.r1.sites.vep.vcf.gz 10:127451820-127451850	# variants at chr10, positions 127451820-127451850
+	

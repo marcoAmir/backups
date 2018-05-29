@@ -1,0 +1,46 @@
+Fixed issues in 1:
+- Header fixed up, VCF now validates using vcf-validator
+
+Fixed issues in 0.3:
+- chrX and chrY now have Hemizygous counts (AC_Hemi) and population specific Hemizygous counts. The AC_Adj has
+also been adjusted accordingly. See README.population_annotations
+
+- An additional round of QC was performed on a sample level, including removing samples with outlier chrX heterozygosity
+and chrY normalized coverage.
+
+- Hard filter applied to remove sites with Inbreeding Coefficient < -0.2 that was VQSR failed to remove.
+
+Fixed issues in 0.2:
+
+- The VQSR 99.6% SNP Sensitivity is too conservative and filters ~17% of singletons. 
+Our analysis of singleton TiTv, Doubleton transmission in Trios, validated de-novo mutations and comparison
+against PCR-Free WGS has shown filtering ~10% of singletons is a better trade off. This corresponds to VQSLOD > -2.632.
+
+- An additional round of QC was performed on a sample and variant level.
+
+- Overlapping SNPs and Indels are represented on the same line. This has two major implications for analysis
+i) SNPs that overlap with Indels can be of string length > 1.
+ii) When a subset of samples are extracted from a call set, the representation of REF and ALT alleles have been adjusted
+to their minimal representation for bi-allelic sites if a variant no longer exist in the new call set.
+
+- AC_Hom annotation has been corrected and is allele specific in the following order (eg. 3 alt alleles) 1/1, 2/2, 3/3
+
+- AC_Het is allele specific, showing all possible pairs in the follwing order (eg. 3 alt alleles) 0/1,0/2,0/3,1/2,1/3,2/3
+
+- Hard filter applied to remove sites with Inbreeding Coefficient < -0.8 that was VQSR failed to remove.
+
+- On producing a subset there are sites with AC_Adj=0. This occurs when there are high quality calls in the larger call set but after
+subsetting the data only lower quality scores remain. The hard filter AC_Adj0_Filter was added to indicat these sites.
+
+- chrY variants added to the call set and also corresponding coverage summary included.
+
+Known issues:
+
+- The variant effect predictor (VEP) tool used to annotate the sites only call set and contains a comprehensive list
+of transcript annotations. In future releases we may switch to Gencode basic transcript annotations to reduce
+this number.
+
+- AC_Adj=0 filter is not allele specific but correction has been made on ExAC Browser.
+
+
+ 
