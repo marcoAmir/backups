@@ -50,3 +50,17 @@
    Sort the Bam:
 	samtools sort ${base}_${target}.bam -o ${base}_${target}.sorted.bam
 
+7) Variant calling with BCFtools (see how-to in the bowtie2 manual)
+   BCFtools is a collection of tools for calling variants and manipulating VCF and BCF files, and it is typically distributed with SAMtools.
+   (Using these tools together allows you to get from alignments in SAM format to variant calls in VCF format. This 
+    example assumes that samtools and bcftools are installed and that the directories containing these binaries are in your PATH environment variable.)
+
+   Sorted BAM (see 6) is a useful format because the alignments are 
+	(a) compressed, which is convenient for long-term storage
+	(b) sorted, which is conveneint for variant discovery. 
+   To generate variant calls in VCF format, run (for example):
+	ln -s ../../indexed_genomes/hg38.fa
+	target=hg38
+	base=SRR7171661
+	samtools mpileup -uf ${target}.fa ${base}_${target}.sorted.bam | bcftools view -Ov - > ${base}_${target}.raw.bcf
+
