@@ -49,6 +49,8 @@
 	samtools view -bS  ${base}_${target}.sam > ${base}_${target}.bam
    Sort the Bam:
 	samtools sort ${base}_${target}.bam -o ${base}_${target}.sorted.bam
+   Index a Bam:
+	samtools index ${base}_${target}.sorted.bam ${base}_${target}.sorted.bam.bai
 
 7) Variant calling with BCFtools (see how-to in the bowtie2 manual)
    BCFtools is a collection of tools for calling variants and manipulating VCF and BCF files, and it is typically distributed with SAMtools.
@@ -63,4 +65,6 @@
 	target=hg38
 	base=SRR7171661
 	samtools mpileup -uf ${target}.fa ${base}_${target}.sorted.bam | bcftools view -Ov - > ${base}_${target}.raw.bcf
+   To view the variants (or simply to convert to vcf - the non-binary):
+	bcftools view ${base}_${target}.raw.bcf > ${base}_${target}.raw.vcf 
 
