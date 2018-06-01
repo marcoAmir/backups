@@ -49,7 +49,7 @@
 	samtools view -bS  ${base}_${target}.sam > ${base}_${target}.bam
    Sort the Bam:
 	samtools sort ${base}_${target}.bam -o ${base}_${target}.sorted.bam
-   Index a Bam:
+   Index a Bam: (e.g., to visualize in IGV)
 	samtools index ${base}_${target}.sorted.bam ${base}_${target}.sorted.bam.bai
 
 7) Variant calling with BCFtools (see how-to in the bowtie2 manual)
